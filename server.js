@@ -28,21 +28,21 @@ app.use(bodyParser.json());
 //   the filtered image file [!!TIP res.sendFile(filteredpath); might be useful]
 
 /**************************************************************************** */
-app.get("/filteredimage", async(res, rep) => {
+app.get("/filteredimage", async(req, res) => {
+    let imageUrl = req.query.image_url.toString();
+
+    if (imageUrl.trim().length === 0) {
+        res.status(400).send("the parameter image_url is required");
+    }
+
     try {
-        let imageUrl = res.query.image_url.toString();
-
-        if (imageUrl.trim().length === 0) {
-            rep.status("404").send("image url not found");
-        }
-
         let filteredImage = await filterImageFromURL(imageUrl);
 
-        rep.status("200").sendFile(filteredImage, () => {
-            deleteLocalFiles(filteredImage);
+        res.status(200).sendFile(filteredImage, () => {
+            deleteLocalFiles([filteredImage]);
         });
     } catch (error) {
-        req.status("500").send("the error happen on server")
+        res.status(500).send("the error happen on server")
     }
 });
 //! END @TODO1
