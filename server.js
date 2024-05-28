@@ -29,10 +29,10 @@ app.use(bodyParser.json());
 
 /**************************************************************************** */
 app.get("/filteredimage", async(req, res) => {
-    let imageUrl = req.query.image_url;
+    const imageUrl = req.query.image_url;
 
     if (!imageUrl) {
-        res.status(400).send("the parameter image_url is required 1");
+        return res.status(400).send("the parameter image_url is required");
     }
 
     try {
@@ -42,11 +42,11 @@ app.get("/filteredimage", async(req, res) => {
             deleteLocalFiles([filteredImage]);
 
             if (error) {
-                res.status(500).send("File failed while send:");
+                return res.status(500).send("File failed while send");
             }
         });
     } catch (error) {
-        res.status(500).send("the error happen on server")
+        return res.status(500).send("the error happen on server")
     }
 });
 //! END @TODO1
