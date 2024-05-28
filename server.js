@@ -29,17 +29,21 @@ app.use(bodyParser.json());
 
 /**************************************************************************** */
 app.get("/filteredimage", async(req, res) => {
-    let imageUrl = req.query.image_url.toString();
+    let imageUrl = req.query.image_url;
 
-    if (imageUrl.trim().length === 0) {
-        res.status(400).send("the parameter image_url is required");
+    if (!imageUrl) {
+        res.status(400).send("the parameter image_url is required 1");
     }
 
     try {
-        let filteredImage = await filterImageFromURL(imageUrl);
+        let filteredImage = await filterImageFromURL(imageUrl.toString());
 
-        res.status(200).sendFile(filteredImage, () => {
+        res.status(200).sendFile(filteredImage, (error) => {
             deleteLocalFiles([filteredImage]);
+
+            if (error) {
+                res.status(500).send("File failed while send:");
+            }
         });
     } catch (error) {
         res.status(500).send("the error happen on server")
